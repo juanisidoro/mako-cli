@@ -1,0 +1,37 @@
+{
+  "name": "@mako-spec/cli",
+  "version": "0.1.0",
+  "description": "CLI tool for validating, inspecting, and benchmarking MAKO files",
+  "type": "module",
+  "bin": {
+    "mako": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["mako", "llm", "markdown", "ai", "cli", "validation"],
+  "author": "juanisidoro",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juanisidoro/mako-cli.git"
+  },
+  "dependencies": {
+    "@mako-spec/js": "^0.1.0",
+    "commander": "^12.1.0",
+    "chalk": "^5.3.0",
+    "glob": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
