@@ -25,25 +25,24 @@ export async function validateCommand(pattern: string, options: ValidateOptions)
       const parsed = parseMakoFile(content);
       const result = validateMakoFile(parsed);
 
-      if (result.valid) {
+      const warnings = result.warnings || [];
+      totalWarnings += warnings.length;
+
+      if (result.valid && warnings.length === 0) {
         totalValid++;
         console.log(`${chalk.green('✓')} ${file}`);
-      } else {
-        const errors = result.errors.filter(e => e.startsWith('[ERROR]') || !e.startsWith('[WARN]'));
-        const warnings = result.errors.filter(e => e.startsWith('[WARN]'));
-
-        totalErrors += errors.length;
-        totalWarnings += warnings.length;
-
-        if (errors.length > 0) {
-          console.log(`${chalk.red('✗')} ${file}`);
-          for (const err of errors) {
-            console.log(`  ${chalk.red('→')} ${err}`);
-          }
-        } else {
-          console.log(`${chalk.yellow('⚠')} ${file}`);
+      } else if (result.valid && warnings.length > 0) {
+        totalValid++;
+        console.log(`${chalk.yellow('⚠')} ${file}`);
+        for (const warn of warnings) {
+          console.log(`  ${chalk.yellow('→')} ${warn}`);
         }
-
+      } else {
+        totalErrors += result.errors.length;
+        console.log(`${chalk.red('✗')} ${file}`);
+        for (const err of result.errors) {
+          console.log(`  ${chalk.red('→')} ${err}`);
+        }
         for (const warn of warnings) {
           console.log(`  ${chalk.yellow('→')} ${warn}`);
         }
