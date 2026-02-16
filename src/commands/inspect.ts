@@ -35,7 +35,7 @@ export async function inspectCommand(file: string, options: InspectOptions) {
     }
 
     // Pretty print
-    const fm = parsed.frontmatter as Record<string, any>;
+    const fm = parsed.frontmatter;
     console.log();
     console.log(chalk.bold.white(`  ${file}`));
     console.log(chalk.dim('  ─'.repeat(30)));
