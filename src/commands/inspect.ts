@@ -35,7 +35,7 @@ export async function inspectCommand(file: string, options: InspectOptions) {
     }
 
     // Pretty print
-    const fm = parsed.frontmatter;
+    const fm = parsed.frontmatter as Record<string, any>;
     console.log();
     console.log(chalk.bold.white(`  ${file}`));
     console.log(chalk.dim('  ─'.repeat(30)));
@@ -62,6 +62,37 @@ export async function inspectCommand(file: string, options: InspectOptions) {
     }
     if (fm.canonical) {
       console.log(`  ${chalk.gray('Canonical')}    ${chalk.blue(fm.canonical)}`);
+    }
+    if (fm['embedding-model']) {
+      console.log(`  ${chalk.gray('Emb. Model')}   ${chalk.white(fm['embedding-model'])}`);
+    }
+
+    // Media
+    if (fm.media) {
+      console.log();
+      console.log(`  ${chalk.bold.white('Media')}`);
+      if (fm.media.cover) {
+        console.log(`    ${chalk.gray('Cover')}      ${chalk.blue(fm.media.cover.url)}`);
+        if (fm.media.cover.alt) {
+          console.log(`    ${chalk.gray('Alt')}        ${chalk.white(fm.media.cover.alt)}`);
+        }
+      }
+      const counts = ['images', 'video', 'audio', 'interactive', 'downloads'] as const;
+      for (const key of counts) {
+        const val = (fm.media as Record<string, unknown>)[key];
+        if (val) {
+          console.log(`    ${chalk.gray(key.charAt(0).toUpperCase() + key.slice(1))}${' '.repeat(Math.max(1, 11 - key.length))}${chalk.yellow(String(val))}`);
+        }
+      }
+    }
+
+    // Related
+    if (fm.related && fm.related.length > 0) {
+      console.log();
+      console.log(`  ${chalk.bold.white('Related')} (${fm.related.length})`);
+      for (const path of fm.related) {
+        console.log(`    ${chalk.blue(path)}`);
+      }
     }
 
     // Actions
@@ -91,7 +122,8 @@ export async function inspectCommand(file: string, options: InspectOptions) {
           if (links && links.length > 0) {
             console.log(`    ${chalk.gray(type)}:`);
             for (const link of links) {
-              console.log(`      ${chalk.blue(link.url)} — ${chalk.gray(link.context)}`);
+              const typeTag = link.type ? ` ${chalk.dim(`[${link.type}]`)}` : '';
+              console.log(`      ${chalk.blue(link.url)} — ${chalk.gray(link.context)}${typeTag}`);
             }
           }
         }
